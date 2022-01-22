@@ -1,0 +1,175 @@
+{
+	"info": {
+		"_postman_id": "f522f556-00c0-4bfe-b87d-ca38c4cd9691",
+		"name": "address-book-api-post",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "REMOVE-AN-ADDRESS-USING-DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9002/delete-address/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"delete-address",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FETCH-AN-ADDRESS-WITH-GET-HTTP-METHOD",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9002/fetch-address/0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"fetch-address",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ-ALL-ADDRESSES-WITH-GET-HTTP-METHOD",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9002/welcome",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"welcome"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "WELCOME-INFO-USING-A-GET-HTTP-METHOD",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9002/welcome",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"welcome"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "INSERT-NEW-ADDRESS-USING-POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Lola\",\r\n    \"lastName\": \"Babalola\",\r\n    \"phoneNumber\": \"2347061254040\",\r\n    \"emailAddress\": \"mayowa@justice.com\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9002/insert-address/new-address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"insert-address",
+						"new-address"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE-OR-MODIFY-ADDRESS-USING-PUT",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":1,\r\n    \"firstName\": \"Tayo\",\r\n    \"lastName\": \"Balogun\",\r\n    \"phoneNumber\": \"2348056715461\",\r\n    \"emailAddress\": \"tayo@balo.com\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9002/modify-address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"modify-address"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE-ADDRESS-USING-POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":20,\r\n    \"firstName\": \"Israel\",\r\n    \"lastName\": \"Man\",\r\n    \"phoneNumber\": \"2348056715461\",\r\n    \"emailAddress\": \"Israel@Man.com\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9002/update-address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9002",
+					"path": [
+						"update-address"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

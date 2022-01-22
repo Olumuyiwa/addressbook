@@ -1,0 +1,43 @@
+-- STRUCTURED QUERY LANGUAGE SQL STATEMENTS 
+1. CREATE
+2. DROP 
+3. INSERT
+4. SELECT
+5. DELETE
+6. UPDATE 
+
+-- to create a table using an sql statement 
+create table RBX_T_ADDRESS_BOOK  (   ID int NOT NULL UNIQUE,  first_name varchar(100) NOT NULL , last_name varchar(100), phone_number varchar(100),  email_address varchar(100)); 
+
+-- to remove or drop a table using an sql statement 
+drop table RBX_T_ADDRESS_BOOK;
+
+-- to insert into a table using an sql statement 
+insert into RBX_T_ADDRESS_BOOK (id,first_name,last_name,phone_number,email_address) values (1,'Ayo','Fola','23480567571','ayo@gmail.com');
+
+insert into RBX_T_ADDRESS_BOOK (id,first_name,last_name,phone_number,email_address) values (2,'Olumuyiwa','Folorunso','2347061254040','Muyiwa@gmail.com');
+
+insert into RBX_T_ADDRESS_BOOK (id,first_name,last_name,phone_number,email_address) values (3,'Omolola','Segun','2347061254123','segun@gmail.com');
+
+
+-- to intentionally insert a record into a table using an sql statement - this will fail if the same id is inserted into the table 
+insert into RBX_T_ADDRESS_BOOK (id,first_name,last_name,phone_number,email_address) values (3,'Omolola','Segun','2347061254123','segun@gmail.com');
+
+
+-- to retrieve some data from a table using an sql statement
+
+select * from RBX_T_ADDRESS_BOOK;
+
+select * from RBX_T_ADDRESS_BOOK;
+
+select * from RBX_T_ADDRESS_BOOK where id=3;
+
+
+-- to delete some record(s) from a table using an sql statement
+
+delete from RBX_T_ADDRESS_BOOK where first_name='Israel';
+
+
+-- to update some data from a table using an sql statement
+
+update RBX_T_ADDRESS_BOOK set first_name='Israel' where   last_name='Folorunso';
