@@ -58,4 +58,3 @@ jobs:
         run: |
           gcloud container clusters get-credentials <your-cluster-name> --zone <your-zone> --project <your-project-id>
           kubectl apply -f k8s/
-
