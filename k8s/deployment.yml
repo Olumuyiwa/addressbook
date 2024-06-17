@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: springboot-app
+  name: address-book
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: springboot-app
+      app: address-book
   template:
     metadata:
       labels:
-        app: springboot-app
+        app: address-book
     spec:
       containers:
-        - name: springboot-app
-          image: gcr.io/my-gcp-project/my-springboot-app:latest
+        - name: address-book
+          image: moyewah/address-book:latest
           ports:
             - containerPort: 8080
           env:

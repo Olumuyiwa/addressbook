@@ -29,16 +29,16 @@ jobs:
         run: ./mvnw test
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/springboot-app:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/address-book:latest --build-arg SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} --build-arg SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} .
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+]        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/springboot-app:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/address-book:latest
 
   deploy:
     needs: build
@@ -57,5 +57,5 @@ jobs:
 
       - name: Deploy to GKE
         run: |
-          gcloud container clusters get-credentials <your-cluster-name> --zone <your-zone> --project <your-project-id>
+          gcloud container clusters get-credentials my-addressbook-cluster-2 --zone us-west1-b --project civic-depth-426210-b2
           kubectl apply -f k8s/
