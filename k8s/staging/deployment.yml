@@ -1,35 +1,74 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: springboot-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: springboot-app
-  template:
-    metadata:
-      labels:
-        app: springboot-app
-    spec:
-      containers:
-        - name: springboot-app
-          image: moyewah/springboot-app:latest
-          ports:
-            - containerPort: 8080
-          env:
-            - name: SPRING_DATASOURCE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: db-url
-            - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: db-username
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: db-password
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - staging
+      - pre-prod
+      - prod
+
+env:
+  REGISTRY: moyewah
+  IMAGE_NAME: springboot-app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t $REGISTRY/$IMAGE_NAME:latest .
+          docker push $REGISTRY/$IMAGE_NAME:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Configure kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+      - name: Set Environment Variables
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          ENV_NAME=$(echo $BRANCH_NAME | tr '-' '_' | tr '[:lower:]' '[:upper:]')
+          echo "DB_URL=${{ secrets[ENV_NAME + '_SPRING_DATASOURCE_URL'] }}" >> $GITHUB_ENV
+          echo "DB_USERNAME=${{ secrets[ENV_NAME + '_SPRING_DATASOURCE_USERNAME'] }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets[ENV_NAME + '_SPRING_DATASOURCE_PASSWORD'] }}" >> $GITHUB_ENV
+
+      - name: Create namespace
+        run: kubectl create namespace ${{ github.ref_name }} || true
+
+      - name: Create Kubernetes Secrets
+        run: |
+          kubectl -n ${{ github.ref_name }} create secret generic db-credentials \
+            --from-literal=db-url=${{ env.DB_URL }} \
+            --from-literal=db-username=${{ env.DB_USERNAME }} \
+            --from-literal=db-password=${{ env.DB_PASSWORD }} || true
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -n ${{ github.ref_name }} -f k8s/${{ github.ref_name }}/deployment.yml
+          kubectl apply -n ${{ github.ref_name }} -f k8s/${{ github.ref_name }}/service.yml
