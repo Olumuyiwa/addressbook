@@ -1,0 +1,63 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+env:
+  REGISTRY: moyewah
+  IMAGE_NAME: springboot-app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t $REGISTRY/$IMAGE_NAME:latest .
+          docker push $REGISTRY/$IMAGE_NAME:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Configure kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+      - name: Create namespace
+        run: kubectl create namespace ${{ github.ref_name }} || true
+
+      - name: Create Kubernetes Secrets
+        run: |
+          kubectl -n ${{ github.ref_name }} create secret generic db-credentials \
+            --from-literal=db-url=${{ secrets['${{ github.ref_name }}_DB_URL'] }} \
+            --from-literal=db-username=${{ secrets['${{ github.ref_name }}_DB_USERNAME'] }} \
+            --from-literal=db-password=${{ secrets['${{ github.ref_name }}_DB_PASSWORD'] }} || true
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -n ${{ github.ref_name }} -f k8s/${{ github.ref_name }}/deployment.yml
+          kubectl apply -n ${{ github.ref_name }} -f k8s/${{ github.ref_name }}/service.yml

@@ -12,13 +12,21 @@ RUN mvn clean package -DskipTests
 # Stage 2: Run the application using the JDK image
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-# Copy the built jar file from the build stage
-COPY --from=build /app/target/*.jar app.jar
+
+# Build arguments for environment-specific configuration
+ARG SPRING_DATASOURCE_URL
+ARG SPRING_DATASOURCE_USERNAME
+ARG SPRING_DATASOURCE_PASSWORD
+ARG PROFILE
 
 # Set environment variables for database connection
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/addressbook \
-    SPRING_DATASOURCE_USERNAME=postgres \
-    SPRING_DATASOURCE_PASSWORD=password
+ENV SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL} \
+    SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME} \
+    SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD} \
+    PROFILE=${PROFILE}
+
+# Copy the built jar file from the build stage
+COPY --from=build /app/target/*.jar app.jar
 
 # Non-root User for security
 # Create a group and user
