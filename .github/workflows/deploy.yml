@@ -1,10 +1,12 @@
-name: Deploy to Kubernetes
+name: Build and Deploy to Kubernetes
 
 on:
   push:
     branches:
       - main
-      - develop
+      - staging
+      - preprod
+      - prod
 
 env:
   REGISTRY: moyewah
@@ -17,6 +19,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Maven
+        run: ./mvnw clean install
+
+      - name: Test with Maven
+        run: ./mvnw test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -53,9 +67,9 @@ jobs:
       - name: Create Kubernetes Secrets
         run: |
           kubectl -n ${{ github.ref_name }} create secret generic db-credentials \
-            --from-literal=db-url=${{ secrets['${{ github.ref_name }}_DB_URL'] }} \
-            --from-literal=db-username=${{ secrets['${{ github.ref_name }}_DB_USERNAME'] }} \
-            --from-literal=db-password=${{ secrets['${{ github.ref_name }}_DB_PASSWORD'] }} || true
+            --from-literal=db-url=${{ secrets[github.ref_name.replace('-', '_').toUpperCase() + '_SPRING_DATASOURCE_URL'] }} \
+            --from-literal=db-username=${{ secrets[github.ref_name.replace('-', '_').toUpperCase() + '_SPRING_DATASOURCE_USERNAME'] }} \
+            --from-literal=db-password=${{ secrets[github.ref_name.replace('-', '_').toUpperCase() + '_SPRING_DATASOURCE_PASSWORD'] }} || true
 
       - name: Deploy to Kubernetes
         run: |

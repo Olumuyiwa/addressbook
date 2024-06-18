@@ -1,60 +1,60 @@
-name: CI/CD Pipeline
+#name: CI/CD Pipeline
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v2
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#
+#      - name: Build with Maven
+#        run: ./mvnw clean install
+#
+#      - name: Test with Maven
+#        run: ./mvnw test
+#
+#      - name: Build Docker image
+#        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/address-book:latest --build-arg SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}  --build-arg SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}  --build-arg SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} .
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#      - name: Push Docker image
+#        run: docker push ${{ secrets.DOCKER_USERNAME }}/address-book:latest
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build with Maven
-        run: ./mvnw clean install
-
-      - name: Test with Maven
-        run: ./mvnw test
-
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/address-book:latest --build-arg SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}  --build-arg SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}  --build-arg SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} .
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/address-book:latest
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up gcloud
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: Deploy to GKE
-        run: |
-          gcloud container clusters get-credentials my-addressbook-cluster-2 --zone us-west1-b --project civic-depth-426210-b2
-          kubectl apply -f k8s/
+#  deploy:
+#    needs: build
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Set up gcloud
+#        uses: google-github-actions/setup-gcloud@v1
+#        with:
+#          version: '290.0.1'
+#          service_account_key: ${{ secrets.GCP_SA_KEY }}
+#          export_default_credentials: true
+#
+#      - name: Deploy to GKE
+#        run: |
+#          gcloud container clusters get-credentials my-addressbook-cluster-2 --zone us-west1-b --project civic-depth-426210-b2
+#          kubectl apply -f k8s/
