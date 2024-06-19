@@ -72,22 +72,37 @@ jobs:
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           ENV_NAME=$(echo $BRANCH_NAME | tr '-' '_' | tr '[:lower:]' '[:upper:]')
-          echo "DB_URL=${{ secrets[ENV_NAME + '_SPRING_DATASOURCE_URL'] }}" >> $GITHUB_ENV
-          echo "DB_USERNAME=${{ secrets[ENV_NAME + '_SPRING_DATASOURCE_USERNAME'] }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ secrets[ENV_NAME + '_SPRING_DATASOURCE_PASSWORD'] }}" >> $GITHUB_ENV
+          DB_URL=${{ secrets.MAIN_SPRING_DATASOURCE_URL }}
+          DB_USERNAME=${{ secrets.MAIN_SPRING_DATASOURCE_USERNAME }}
+          DB_PASSWORD=${{ secrets.MAIN_SPRING_DATASOURCE_PASSWORD }}
+
+          if [[ "$ENV_NAME" == "STAGING" ]]; then
+            DB_URL=${{ secrets.STAGING_SPRING_DATASOURCE_URL }}
+            DB_USERNAME=${{ secrets.STAGING_SPRING_DATASOURCE_USERNAME }}
+            DB_PASSWORD=${{ secrets.STAGING_SPRING_DATASOURCE_PASSWORD }}
+          elif [[ "$ENV_NAME" == "PREPROD" ]]; then
+            DB_URL=${{ secrets.PREPROD_SPRING_DATASOURCE_URL }}
+            DB_USERNAME=${{ secrets.PREPROD_SPRING_DATASOURCE_USERNAME }}
+            DB_PASSWORD=${{ secrets.PREPROD_SPRING_DATASOURCE_PASSWORD }}
+          elif [[ "$ENV_NAME" == "PROD" ]]; then
+            DB_URL=${{ secrets.PROD_SPRING_DATASOURCE_URL }}
+            DB_USERNAME=${{ secrets.PROD_SPRING_DATASOURCE_USERNAME }}
+            DB_PASSWORD=${{ secrets.PROD_SPRING_DATASOURCE_PASSWORD }}
+          fi
+
+          echo "DB_URL=$DB_URL" >> $GITHUB_ENV
+          echo "DB_USERNAME=$DB_USERNAME" >> $GITHUB_ENV
+          echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
 
       - name: Create namespace
         run: kubectl create namespace ${{ github.ref_name }} || true
 
       - name: Create Kubernetes Secrets
         run: |
-          echo "DB_URL=${{ env.DB_URL }}"
-          echo "DB_USERNAME=${{ env.DB_USERNAME }}"
-          echo "DB_PASSWORD=${{ env.DB_PASSWORD }}"
           kubectl -n ${{ github.ref_name }} create secret generic db-credentials \
-            --from-literal=db-url=${{ env.DB_URL }} \
-            --from-literal=db-username=${{ env.DB_USERNAME }} \
-            --from-literal=db-password=${{ env.DB_PASSWORD }} || true
+            --from-literal=db-url=$DB_URL \
+            --from-literal=db-username=$DB_USERNAME \
+            --from-literal=db-password=$DB_PASSWORD || true
 
       - name: Deploy to Kubernetes
         run: |
