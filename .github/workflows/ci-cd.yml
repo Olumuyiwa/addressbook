@@ -81,10 +81,13 @@ jobs:
 
       - name: Create Kubernetes Secrets
         run: |
+          echo "DB_URL=${{ env.DB_URL }}"
+          echo "DB_USERNAME=${{ env.DB_USERNAME }}"
+          echo "DB_PASSWORD=${{ env.DB_PASSWORD }}"
           kubectl -n ${{ github.ref_name }} create secret generic db-credentials \
-            --from-literal=db-url=$DB_URL \
-            --from-literal=db-username=$DB_USERNAME \
-            --from-literal=db-password=$DB_PASSWORD || true
+            --from-literal=db-url=${{ env.DB_URL }} \
+            --from-literal=db-username=${{ env.DB_USERNAME }} \
+            --from-literal=db-password=${{ env.DB_PASSWORD }} || true
 
       - name: Deploy to Kubernetes
         run: |
