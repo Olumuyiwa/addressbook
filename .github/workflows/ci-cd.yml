@@ -67,9 +67,9 @@ jobs:
       - name: Create Kubernetes Secrets
         run: |
           kubectl -n ${{ github.ref_name }} create secret generic db-credentials \
-            --from-literal=db-url=${{ secrets[github.ref_name.replace('-', '_').toUpperCase() + '_SPRING_DATASOURCE_URL'] }} \
-            --from-literal=db-username=${{ secrets[github.ref_name.replace('-', '_').toUpperCase() + '_SPRING_DATASOURCE_USERNAME'] }} \
-            --from-literal=db-password=${{ secrets[github.ref_name.replace('-', '_').toUpperCase() + '_SPRING_DATASOURCE_PASSWORD'] }} || true
+            --from-literal=db-url=${{ secrets[github.ref_name + '_SPRING_DATASOURCE_URL'] }} \
+            --from-literal=db-username=${{ secrets[github.ref_name + '_SPRING_DATASOURCE_USERNAME'] }} \
+            --from-literal=db-password=${{ secrets[github.ref_name + '_SPRING_DATASOURCE_PASSWORD'] }} || true
 
       - name: Deploy to Kubernetes
         run: |
