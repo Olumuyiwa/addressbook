@@ -19,7 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        run: echo "Code checkout complete"
 
       - name: Print message Checkout complete
         run: echo "Code checkout complete"
@@ -29,7 +28,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-        run: echo "Set up Jdk complete"
 
       - name: Print message Set up Jdk complete
         run: echo "Set up Jdk complete"
