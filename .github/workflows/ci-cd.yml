@@ -74,11 +74,19 @@ jobs:
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           ENV_NAME=$(echo $BRANCH_NAME | tr '-' '_' | tr '[:lower:]' '[:upper:]')
-          DB_URL=${{ secrets.MAIN_SPRING_DATASOURCE_URL }}
-          DB_USERNAME=${{ secrets.MAIN_SPRING_DATASOURCE_USERNAME }}
-          DB_PASSWORD=${{ secrets.MAIN_SPRING_DATASOURCE_PASSWORD }}
 
-          if [[ "$ENV_NAME" == "STAGING" ]]; then
+          echo "BRANCH_NAME is $BRANCH_NAME"
+          echo "ENV_NAME is $ENV_NAME"
+
+          DB_URL=""
+          DB_USERNAME=""
+          DB_PASSWORD=""
+
+          if [[ "$ENV_NAME" == "MAIN" ]]; then
+            DB_URL=${{ secrets.MAIN_SPRING_DATASOURCE_URL }}
+            DB_USERNAME=${{ secrets.MAIN_SPRING_DATASOURCE_USERNAME }}
+            DB_PASSWORD=${{ secrets.MAIN_SPRING_DATASOURCE_PASSWORD }}
+          elif [[ "$ENV_NAME" == "STAGING" ]]; then
             DB_URL=${{ secrets.STAGING_SPRING_DATASOURCE_URL }}
             DB_USERNAME=${{ secrets.STAGING_SPRING_DATASOURCE_USERNAME }}
             DB_PASSWORD=${{ secrets.STAGING_SPRING_DATASOURCE_PASSWORD }}
@@ -91,6 +99,10 @@ jobs:
             DB_USERNAME=${{ secrets.PROD_SPRING_DATASOURCE_USERNAME }}
             DB_PASSWORD=${{ secrets.PROD_SPRING_DATASOURCE_PASSWORD }}
           fi
+
+          echo "DB_URL is $DB_URL"
+          echo "DB_USERNAME is $DB_USERNAME"
+          echo "DB_PASSWORD is $DB_PASSWORD"
 
           echo "DB_URL=$DB_URL" >> $GITHUB_ENV
           echo "DB_USERNAME=$DB_USERNAME" >> $GITHUB_ENV
