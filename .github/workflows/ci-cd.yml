@@ -41,7 +41,17 @@ jobs:
 
           echo "BRANCH_NAME is $BRANCH_NAME"
           echo "ENV_NAME is $ENV_NAME"
-
+          
+          if [[ "$ENV_NAME" == "MAIN" ]]; then
+            echo 'MAIN variables will be used'
+          elif [[ "$ENV_NAME" == "STAGING" ]]; then
+             echo 'STAGING variables will be used'
+          elif [[ "$ENV_NAME" == "PREPROD" ]]; then
+             echo 'PREPROD variables will be used'
+          elif [[ "$ENV_NAME" == "PROD" ]]; then
+             echo 'PROD variables will be used'
+          fi
+          
           DB_URL=''
           DB_USERNAME=''
           DB_PASSWORD=''
