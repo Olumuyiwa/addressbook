@@ -83,9 +83,9 @@ jobs:
           DB_PASSWORD=""
 
           if [[ "$ENV_NAME" == "MAIN" ]]; then
-            DB_URL=${{ secrets.MAIN_SPRING_DATASOURCE_URL }}
-            DB_USERNAME=${{ secrets.MAIN_SPRING_DATASOURCE_USERNAME }}
-            DB_PASSWORD=${{ secrets.MAIN_SPRING_DATASOURCE_PASSWORD }}
+            DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+            DB_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           elif [[ "$ENV_NAME" == "STAGING" ]]; then
             DB_URL=${{ secrets.STAGING_SPRING_DATASOURCE_URL }}
             DB_USERNAME=${{ secrets.STAGING_SPRING_DATASOURCE_USERNAME }}
