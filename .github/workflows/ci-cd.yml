@@ -65,7 +65,9 @@ jobs:
           export_default_credentials: true
 
       - name: Configure kubeconfig
-        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
       - name: Set Environment Variables
         id: set_env_vars
