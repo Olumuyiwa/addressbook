@@ -13,35 +13,6 @@ env:
   IMAGE_NAME: springboot-app
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build with Maven
-        run: ./mvnw clean install
-
-      - name: Test with Maven
-        run: ./mvnw test
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Build and push Docker image
-        run: |
-          docker build -t $REGISTRY/$IMAGE_NAME:latest .
-          docker push $REGISTRY/$IMAGE_NAME:latest
 
   deploy:
     needs: build
@@ -75,6 +46,8 @@ jobs:
           DB_URL=''
           DB_USERNAME=''
           DB_PASSWORD=''
+          
+          echo "Got here...ENV_NAME is $ENV_NAME"
 
           if [[ "$ENV_NAME" == "MAIN" ]]; then
             DB_URL=${{ secrets.SPRING_DATASOURCE_URL }}
